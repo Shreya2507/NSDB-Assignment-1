@@ -1,0 +1,219 @@
+show dbs;
+
+use company_db;
+
+company_db> db.createCollection("Employee");
+{ ok: 1 }
+
+company_db> db.Employee.insertMany(
+... [
+...     {
+...         "emono": 101,
+...         "ename": "Shreya Mathur",
+...         "sal": 60000.00,
+...         "dept": {"deptno": 12, "dname": "HR", "dloc": "Mumbai"},
+...         "Desg": "Analyst",
+...         "mgr": {"name":"Satish", "num": 1111},
+...         "project": [
+...             {"name": "Project-1", "Hrs": 4},
+...             {"name": "Project-2", "Hrs": 5}
+...         ]
+...     },
+...     {
+...         "emono": 102,
+...         "ename": "Krish Goyal",
+...         "sal": 40000.00,
+...         "dept": {"deptno": 12, "dname": "Finance", "dloc": "Delhi"},
+...         "Desg": "Finances",
+...         "mgr": {"name":"Ankita", "num": 2222},
+...         "project": [
+...             {"name": "Project-1", "Hrs": 4},
+...             {"name": "Project-4", "Hrs": 3}
+...         ]
+...     },
+...     {
+...         "emono": 103,
+...         "ename": "Anshul Jain",
+...         "sal": 20000.00,
+...         "dept": {"deptno": 12, "dname": "HR", "dloc": "Mumbai"},
+...         "Desg": "Clerk",
+...         "mgr": {"name":"Satish", "num": 1111},
+...         "project": [
+...             {"name": "Project-2", "Hrs": 5},
+...             {"name": "Project-3", "Hrs": 4}
+...         ]
+...     },
+...     {
+...         "emono": 104,
+...         "ename": "Ashima Singh",
+...         "sal": 9000.00,
+...         "dept": {"deptno": 12, "dname": "Purchase", "dloc": "Delhi"},
+...         "Desg": "Manager",
+...         "mgr": {"name":"Aryan", "num": 3333},
+...         "project": [
+...             {"name": "Project-2", "Hrs": 4},
+...             {"name": "Project-4", "Hrs": 5}
+...         ]
+...     },
+...     {
+...         "emono": 105,
+...         "ename": "Deepanshu Sharma",
+...         "sal": 50000.00,
+...         "dept": {"deptno": 12, "dname": "IT", "dloc": "Mumbai"},
+...         "Desg": "Coordinator",
+...         "mgr": {"name":"Ankita", "num": 2222},
+...         "project": [
+...             {"name": "Project-1", "Hrs": 4}
+...         ]
+...     }
+... ]);
+{
+  acknowledged: true,
+  insertedIds: {
+    '0': ObjectId("64df49642ea22b33b88873a2"),
+    '1': ObjectId("64df49642ea22b33b88873a3"),
+    '2': ObjectId("64df49642ea22b33b88873a4"),
+    '3': ObjectId("64df49642ea22b33b88873a5"),
+    '4': ObjectId("64df49642ea22b33b88873a6")
+  }
+}
+
+
+//1.
+company_db> db.Employee.updateMany({Desg: "Clerk"}, {$set: {Desg: "Administrative Officer"}});
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+
+//2.
+company_db> db.Employee.updateMany( {Desg: "Analyst", "project.name": 'Project-1'}, {$set: {"project.$.Hrs": 5}} );
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+
+//3.
+company_db> db.Employee.updateMany( {ename: /^Deep/}, {$push: {project: {name: "Project-3", Hrs: 2}}} )
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+
+
+company_db> db.Employee.updateMany( {ename: /^Deep/}, {$push: {project: {name: "Project-4", Hrs: 2}}} )
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+
+//4.
+
+
+//5. 
+company_db> db.Employee.updateMany( {"mgr.name": "Satish"}, {$set: {"mgr.name": "Tushar", "mgr.num": 3333}} )
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 2,
+  modifiedCount: 2,
+  upsertedCount: 0
+}
+
+//6.
+company_db> db.Employee.updateMany( {"dept.dname": "Purchase"}, {$inc: {sal: 15000}} )
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+
+
+//7.
+company_db> db.Employee.updateMany( {"project.name": "Project-2"}, {$inc: {"project.$.Hrs": -2}} )
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+
+
+
+//8.
+company_db> db.Employee.updateMany({"project.name": "Project-2", "project.Hrs": 4}, {$pull: {project: {name: "Project-2"}}} )
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 2,
+  modifiedCount: 2,
+  upsertedCount: 0
+}
+
+
+//9.
+company_db> db.Employee.updateMany( {sal: {$lt: 10000}}, {$set:{sal:10000}} )
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+
+//13.
+company_db> db.Employee.updateMany( {"project.name": "Project-1", "project.Hrs": 4}, {$set: {Desg: "Senior Programmer"}} )
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 2,
+  modifiedCount: 2,
+  upsertedCount: 0
+}
+
+//17.
+company_db> db.Employee.updateMany( {$or: [ {"project.name": "Project-1"}, {"project.name": "Project-2"}, {"project.name": "Project-3"}  ]}, {$inc: {sal: 10000}} )
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 5,
+  modifiedCount: 5,
+  upsertedCount: 0
+}
+
+//18.
+company_db> db.Employee.deleteMany({"project.name": "Project-1"})
+{ acknowledged: true, deletedCount: 3 }
+
+
+
+
+
+
+
+
+//
+$switch: {
+   branches: [
+      { case: {$gt: [ sal, 50000 ]}, then: {$inc: {bonus, 2000}} },
+      { case: {$and: [{$lt: [ sal, 50000 ]}, {$gt: [ sal, 30000 ]}]}, then: {$inc: {bonus, 1500}} },
+   ],
+   default: {bonus: 1000}
+}
+
+
