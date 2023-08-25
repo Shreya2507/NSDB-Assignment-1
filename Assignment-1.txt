@@ -1,3 +1,8 @@
+Name: Shreya Mathur
+Roll no.: 21CSU096
+Class: FS-A 
+**********************
+
 show dbs;
 
 use company_db;
@@ -79,6 +84,7 @@ company_db> db.Employee.insertMany(
 }
 
 
+
 //1.
 company_db> db.Employee.updateMany({Desg: "Clerk"}, {$set: {Desg: "Administrative Officer"}});
 {
@@ -89,6 +95,7 @@ company_db> db.Employee.updateMany({Desg: "Clerk"}, {$set: {Desg: "Administrativ
   upsertedCount: 0
 }
 
+
 //2.
 company_db> db.Employee.updateMany( {Desg: "Analyst", "project.name": 'Project-1'}, {$set: {"project.$.Hrs": 5}} );
 {
@@ -98,6 +105,7 @@ company_db> db.Employee.updateMany( {Desg: "Analyst", "project.name": 'Project-1
   modifiedCount: 1,
   upsertedCount: 0
 }
+
 
 //3.
 company_db> db.Employee.updateMany( {ename: /^Deep/}, {$push: {project: {name: "Project-3", Hrs: 2}}} )
@@ -119,7 +127,36 @@ company_db> db.Employee.updateMany( {ename: /^Deep/}, {$push: {project: {name: "
   upsertedCount: 0
 }
 
+
 //4.
+company_db> db.Employee.updateOne( {sal: {$gt: 50000}}, {$inc: {bonus: 200}} )
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+
+
+company_db> db.Employee.updateOne( {sal: {$lt: 50000, $gt: 30000}}, {$inc: {bonus: 1500}} )
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+
+
+company_db> db.Employee.updateOne( {sal: {$lt: 30000}}, {$inc: {bonus: 1000}} )
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
 
 
 //5. 
@@ -131,6 +168,7 @@ company_db> db.Employee.updateMany( {"mgr.name": "Satish"}, {$set: {"mgr.name": 
   modifiedCount: 2,
   upsertedCount: 0
 }
+
 
 //6.
 company_db> db.Employee.updateMany( {"dept.dname": "Purchase"}, {$inc: {sal: 15000}} )
@@ -154,7 +192,6 @@ company_db> db.Employee.updateMany( {"project.name": "Project-2"}, {$inc: {"proj
 }
 
 
-
 //8.
 company_db> db.Employee.updateMany({"project.name": "Project-2", "project.Hrs": 4}, {$pull: {project: {name: "Project-2"}}} )
 {
@@ -176,6 +213,33 @@ company_db> db.Employee.updateMany( {sal: {$lt: 10000}}, {$set:{sal:10000}} )
   upsertedCount: 0
 }
 
+
+//10.
+company_db> db.Employee.updateOne( {$or: [{bonus: {$lt: 2000}}, {sal: {$lt: 20000}}, {"dept.dname": "sales"}]}, {$inc: {bonus: 500}} )
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+
+
+//11.
+company_db> db.Employee.updateOne( {$or: [ {Desg: "Analyst"}, {sal: {$in: [30000, 33000, 35000]}} ]}, {$push: {project: {$each: [ {name: "Project-5", Hrs: 2}, {name: "Project-6", Hrs: 3} ], $position: 2}}} )
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+
+
+//12.
+company_db> db.Employee.updateMany( {dept: "HR", "dept.dloc": "Mumbai"}, {$pop: {project: 1}} )
+
+
 //13.
 company_db> db.Employee.updateMany( {"project.name": "Project-1", "project.Hrs": 4}, {$set: {Desg: "Senior Programmer"}} )
 {
@@ -185,6 +249,26 @@ company_db> db.Employee.updateMany( {"project.name": "Project-1", "project.Hrs":
   modifiedCount: 2,
   upsertedCount: 0
 }
+
+
+//14.
+company_db> db.Employee.updateMany( {$or: [{"mgr.name": "Rajan"}, {"mgr.name": "Revati"}] }, {$set: {hobbies: ["cricket, volleyball"]}} )
+
+
+//15. 
+company_db> db.Employee.updateMany( {$or: [{"project.name": "Project-4", "project.Hrs": 3}, {"project.name": "Project-3", "project.Hrs": 4}] }, {$set: {skillset: ["MongoDB", "Python", "Java"]}} )
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 2,
+  modifiedCount: 2,
+  upsertedCount: 0
+}
+
+
+//16.
+company_db> db.Employee.updateMany( {ename: {$regex: "^[RP].*[js]$"}}, {$push: {hobbies: {$each: ["blogging"], $position: 2}}} )
+
 
 //17.
 company_db> db.Employee.updateMany( {$or: [ {"project.name": "Project-1"}, {"project.name": "Project-2"}, {"project.name": "Project-3"}  ]}, {$inc: {sal: 10000}} )
@@ -196,24 +280,84 @@ company_db> db.Employee.updateMany( {$or: [ {"project.name": "Project-1"}, {"pro
   upsertedCount: 0
 }
 
+
+company_db> db.Employee.updateOne( {"dept.dloc": "Mumbai"},{$inc: {bonus: -1000, sal: 1000}} )
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+
+
 //18.
 company_db> db.Employee.deleteMany({"project.name": "Project-1"})
 { acknowledged: true, deletedCount: 3 }
 
 
+//19.
+company_db> db.Employee.replaceOne( {ename: "Deepak"},
+... {
+...   "emono": 155,
+...   "ename": "Ajay Mathur",
+...   "sal": 70000.00,
+...   "dept": {"deptno": 10, "dname": "IT", "dloc": "Mumbai"},
+...   "Desg": "Analyst",
+...   "mgr": {"name":"Ankita", "num": 2222},
+...   "project": [
+...     {"name": "Project-1", "Hrs": 5},
+...     {"name": "Project-3", "Hrs": 4}
+...   ]
+... });
 
 
-
-
-
-
-//
-$switch: {
-   branches: [
-      { case: {$gt: [ sal, 50000 ]}, then: {$inc: {bonus, 2000}} },
-      { case: {$and: [{$lt: [ sal, 50000 ]}, {$gt: [ sal, 30000 ]}]}, then: {$inc: {bonus, 1500}} },
-   ],
-   default: {bonus: 1000}
+//20.
+company_db> db.Employee.updateMany( {skillset: "Python"}, {$set: {"skillset.$": "Python 3.8"}} )
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 2,
+  modifiedCount: 2,
+  upsertedCount: 0
 }
 
 
+//21.
+company_db> db.Employee.updateMany( {"dept.dloc": "Pune"}, {$push: {skillset: {$each: ["MongoDB","Perl"]}}} )
+
+
+//22.
+company_db> db.Employee.updateMany( {$or: [{"project.name": "Project-1"}, {"project.name": "Project-2"}]}, {$pop: {hobbies: -1}} )
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 5,
+  modifiedCount: 0,
+  upsertedCount: 0
+}
+
+
+//23.
+company_db> db.Employee.updateMany( {"project.1.Hrs": 4}, {$pop: {hobbies: 1}} )
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 0,
+  upsertedCount: 0
+}
+
+//24.
+company_db> db.Employee.updateMany( {skillset: {$in: ["Perl", "Python"]}}, {$push: {project: {$each: [ {name: "Project-5", Hrs: 5}, {name: "Project-6", Hrs: 2} ]}}} )
+
+
+//25.
+company_db> db.Employee.updateOne( {"project.name": "Project-1", "project.Hrs": {$lt: 6}}, {$set: {"project.$.Hrs": 6}} )
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
